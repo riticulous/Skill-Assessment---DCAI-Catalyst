@@ -87,7 +87,7 @@ export async function deleteSession(sessionId: string, token: string) {
 export function getWebSocketUrl(sessionId: string, token: string | null = null): string {
   const wsBase = API_BASE
     ? API_BASE.replace(/^http/, 'ws')
-    : `ws://${window.location.host}`;
+    : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`;
   const url = `${wsBase}/api/ws/chat/${sessionId}`;
   if (token) return `${url}?token=${token}`;
   return url;

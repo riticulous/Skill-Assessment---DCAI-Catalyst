@@ -22,15 +22,17 @@
 
 | Landing Page | Dashboard |
 |:---:|:---:|
-| ![Landing Page](docs/screenshots/landing.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+| <img width="1425" height="765" alt="Screenshot 2026-04-26 at 9 14 31 PM" src="https://github.com/user-attachments/assets/5fc84ef6-3ad3-4f24-9651-577c307f2089" /> | <img width="1429" height="768" alt="Screenshot 2026-04-26 at 9 16 01 PM" src="https://github.com/user-attachments/assets/ff17cd85-3c54-4dbb-86ef-cdcb888745d2" /> |
 
-| Assessment — Text & MCQ | Assessment — Coding Challenge |
+| Assessment — Text & MCQ 
 |:---:|:---:|
-| ![Assessment](docs/screenshots/assessment.png) | ![Coding](docs/screenshots/coding.png) |
+| <img width="1470" height="764" alt="Screenshot 2026-04-26 at 9 18 54 PM" src="https://github.com/user-attachments/assets/4b1538d3-dd4f-46ff-8eed-7ef242ec9de7" />
+ | 
 
 | Report & Learning Plan | PDF Export |
 |:---:|:---:|
-| ![Report](docs/screenshots/report.png) | ![PDF](docs/screenshots/pdf.png) |
+| <img width="1470" height="766" alt="Screenshot 2026-04-26 at 9 20 02 PM" src="https://github.com/user-attachments/assets/7a6f3ca3-e1d9-46a2-ba28-1229bd12114f" />
+ | <img width="1264" height="888" alt="Screenshot 2026-04-26 at 9 20 43 PM" src="https://github.com/user-attachments/assets/8759b5dc-6151-4cf2-aac7-1fdc43babd96" /> |
 
 ---
 
@@ -288,7 +290,3 @@ Certbot auto-renews certificates via a systemd timer.
 | `GET` | `/health` | Health check |
 
 ---
-
-## License
-
-MIT

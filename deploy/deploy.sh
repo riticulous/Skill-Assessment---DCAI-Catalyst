@@ -24,8 +24,17 @@ if [ -d "$APP_DIR/.git" ]; then
     git pull origin main
 else
     echo "[1/6] Cloning repo..."
+    # Save any existing env files before cloning
+    mkdir -p /tmp/app-env-backup
+    [ -f "$APP_DIR/backend/.env" ] && cp "$APP_DIR/backend/.env" /tmp/app-env-backup/backend.env
+    [ -f "$APP_DIR/frontend/.env" ] && cp "$APP_DIR/frontend/.env" /tmp/app-env-backup/frontend.env
+    rm -rf "$APP_DIR"
     git clone "$REPO" "$APP_DIR"
     cd "$APP_DIR"
+    # Restore env files
+    [ -f /tmp/app-env-backup/backend.env ] && cp /tmp/app-env-backup/backend.env "$APP_DIR/backend/.env"
+    [ -f /tmp/app-env-backup/frontend.env ] && cp /tmp/app-env-backup/frontend.env "$APP_DIR/frontend/.env"
+    rm -rf /tmp/app-env-backup
 fi
 
 # ── Backend deps ──────────────────────────────────────────
@@ -42,6 +51,10 @@ echo "[3/6] Building frontend..."
 cd "$APP_DIR/frontend"
 npm ci --silent
 npm run build
+
+# ── Fix permissions for Nginx ─────────────────────────────
+chmod 755 /home/ubuntu
+chmod -R 755 "$APP_DIR/frontend/dist"
 
 # ── Nginx config ──────────────────────────────────────────
 echo "[4/6] Configuring Nginx..."

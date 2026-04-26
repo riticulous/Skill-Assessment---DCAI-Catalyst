@@ -20,18 +20,24 @@ import { cpp } from "@codemirror/lang-cpp";
 import { EditorView } from "@codemirror/view";
 
 interface CodeExample {
-  input: string;
-  output: string;
-  explanation?: string;
+  input: string | object;
+  output: string | object;
+  explanation?: string | object;
+}
+
+function stringify(val: unknown): string {
+  if (val == null) return '';
+  if (typeof val === 'string') return val;
+  return JSON.stringify(val, null, 2);
 }
 
 interface CodeEditorProps {
-  title: string;
-  description: string;
+  title: string | object;
+  description: string | object;
   language: string;
   starterCode: string;
   examples: CodeExample[];
-  hints?: string[];
+  hints?: (string | object)[];
   onSubmit: (code: string) => void;
   disabled?: boolean;
 }
@@ -232,10 +238,10 @@ export function CodeEditor({
             <div className="border-b border-white/[0.06] px-6 py-5">
               <div className="mb-2 flex items-center gap-2">
                 <Code2 className="h-4 w-4 text-violet" />
-                <h3 className="text-[15px] font-semibold text-white/90">{title}</h3>
+                <h3 className="text-[15px] font-semibold text-white/90">{stringify(title)}</h3>
               </div>
               <p className="whitespace-pre-wrap text-[13.5px] leading-relaxed text-white/65">
-                {description}
+                {stringify(description)}
               </p>
             </div>
 
@@ -253,15 +259,15 @@ export function CodeEditor({
                     >
                       <div className="font-mono text-[12px] leading-5">
                         <span className="text-white/40">Input:{"  "}</span>
-                        <span className="text-white/75">{ex.input}</span>
+                        <span className="whitespace-pre-wrap text-white/75">{stringify(ex.input)}</span>
                       </div>
                       <div className="font-mono text-[12px] leading-5">
                         <span className="text-white/40">Output: </span>
-                        <span className="text-emerald-400/90">{ex.output}</span>
+                        <span className="whitespace-pre-wrap text-emerald-400/90">{stringify(ex.output)}</span>
                       </div>
                       {ex.explanation && (
                         <div className="mt-1.5 text-[12px] leading-4 text-white/40">
-                          {ex.explanation}
+                          {stringify(ex.explanation)}
                         </div>
                       )}
                     </div>
@@ -300,7 +306,7 @@ export function CodeEditor({
                           className="flex items-start gap-2 text-[13px] text-white/50"
                         >
                           <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-amber-400/50" />
-                          {hint}
+                          {stringify(hint)}
                         </li>
                       ))}
                     </motion.ul>

@@ -305,57 +305,57 @@ Certbot auto-renews certificates via a systemd timer.
                     │              FastAPI Backend (Uvicorn)              │
                     │                   Port 8000                         │
                     │                                                     │
-                    │  ┌─────────────────────────────────────────────┐   │
-                    │  │              Middleware                      │   │
-                    │  │  ┌─────────────────────────────────────┐   │   │
-                    │  │  │         CORS Middleware              │   │   │
-                    │  │  │  (allows frontend origin)           │   │   │
-                    │  │  └─────────────────────────────────────┘   │   │
-                    │  │  ┌─────────────────────────────────────┐   │   │
-                    │  │  │        Auth Middleware               │   │   │
-                    │  │  │  JWT decode (local) OR              │   │   │
-                    │  │  │  Supabase /auth/v1/user (fallback)  │   │   │
-                    │  │  └─────────────────────────────────────┘   │   │
-                    │  └─────────────────────────────────────────────┘   │
+                    │  ┌─────────────────────────────────────────────┐    │
+                    │  │              Middleware                     │    │
+                    │  │  ┌─────────────────────────────────────┐    │    │
+                    │  │  │         CORS Middleware             │    │    │
+                    │  │  │  (allows frontend origin)           │    │    │
+                    │  │  └─────────────────────────────────────┘    │    │
+                    │  │  ┌─────────────────────────────────────┐    │    │
+                    │  │  │        Auth Middleware              │    │    │
+                    │  │  │  JWT decode (local) OR              │    │    │ 
+                    │  │  │  Supabase /auth/v1/user (fallback)  │    │    │
+                    │  │  └─────────────────────────────────────┘    │    │
+                    │  └─────────────────────────────────────────────┘    │
                     │                                                     │
-                    │  ┌──────────── API Routes ─────────────────────┐   │
-                    │  │                                             │   │
-                    │  │  POST /api/session     → Create assessment  │   │
-                    │  │  POST /api/session/text→ Create (text mode) │   │
-                    │  │  GET  /api/sessions    → List user sessions │   │
-                    │  │  DELETE /api/session/:id→ Delete session    │   │
-                    │  │  GET  /api/report/:id  → Fetch report      │   │
-                    │  │  WS   /api/ws/chat/:id → Live assessment   │   │
-                    │  │                                             │   │
-                    │  └─────────────┬───────────────────────────────┘   │
+                    │  ┌──────────── API Routes ─────────────────────┐    │
+                    │  │                                             │    │
+                    │  │  POST /api/session     → Create assessment  │    │
+                    │  │  POST /api/session/text→ Create (text mode) │    │
+                    │  │  GET  /api/sessions    → List user sessions │    │
+                    │  │  DELETE /api/session/:id→ Delete session    │    │
+                    │  │  GET  /api/report/:id  → Fetch report       │    │
+                    │  │  WS   /api/ws/chat/:id → Live assessment    │    │
+                    │  │                                             │    │
+                    │  └─────────────┬───────────────────────────────┘    │
                     │                │                                    │
-                    │  ┌─────────────▼───────────────────────────────┐   │
-                    │  │            Services Layer                    │   │
-                    │  │                                             │   │
-                    │  │  ┌───────────────────┐  ┌────────────────┐ │   │
-                    │  │  │  Skill Extractor  │  │ Resume Parser  │ │   │
-                    │  │  │  (JD + Resume     │  │ (PyMuPDF)      │ │   │
-                    │  │  │   skill analysis) │  └────────────────┘ │   │
-                    │  │  └───────┬───────────┘                     │   │
+                    │  ┌─────────────▼───────────────────────────────┐    │
+                    │  │            Services Layer                   │    │
+                    │  │                                             │    │
+                    │  │  ┌───────────────────┐  ┌────────────────┐  │   │
+                    │  │  │  Skill Extractor  │  │ Resume Parser  │  │   │
+                    │  │  │  (JD + Resume     │  │ (PyMuPDF)      │  │   │
+                    │  │  │   skill analysis) │  └────────────────┘  │   │
+                    │  │  └───────┬───────────┘                      │   │
                     │  │          │                                  │   │
-                    │  │  ┌───────▼───────────┐                     │   │
-                    │  │  │ Assessment Agent  │                     │   │
-                    │  │  │                   │                     │   │
-                    │  │  │  Per skill:       │                     │   │
-                    │  │  │  Q1: Text question│                     │   │
-                    │  │  │  Q2: MCQ #1       │                     │   │
-                    │  │  │  Q3: MCQ #2       │                     │   │
-                    │  │  │  → Score skill    │                     │   │
-                    │  │  │                   │                     │   │
-                    │  │  │  Then (if tech):  │                     │   │
-                    │  │  │  Coding Challenge │                     │   │
-                    │  │  │  → Score code     │                     │   │
-                    │  │  └───────┬───────────┘                     │   │
+                    │  │  ┌───────▼───────────┐                      │   │
+                    │  │  │ Assessment Agent  │                      │   │
+                    │  │  │                   │                      │   │
+                    │  │  │  Per skill:       │                      │   │
+                    │  │  │  Q1: Text question│                      │   │
+                    │  │  │  Q2: MCQ #1       │                      │   │
+                    │  │  │  Q3: MCQ #2       │                      │   │
+                    │  │  │  → Score skill    │                      │   │
+                    │  │  │                   │                      │   │
+                    │  │  │  Then (if tech):  │                      │   │
+                    │  │  │  Coding Challenge │                      │   │
+                    │  │  │  → Score code     │                      │   │
+                    │  │  └───────┬───────────┘                      │   │
                     │  │          │                                  │   │
-                    │  │  ┌───────▼───────────┐  ┌────────────────┐ │   │
-                    │  │  │ Scoring Service   │  │ Learning Plan  │ │   │
-                    │  │  │ (per-skill + code)│  │ Generator      │ │   │
-                    │  │  └──────────────────┘  └────────────────┘ │   │
+                    │  │  ┌───────▼───────────┐  ┌────────────────┐  │   │
+                    │  │  │ Scoring Service   │  │ Learning Plan  │  │   │
+                    │  │  │ (per-skill + code)│  │ Generator      │  │   │
+                    │  │  └──────────────────┘   └────────────────┘  │   │
                     │  │                                             │   │
                     │  └─────────────────────────────────────────────┘   │
                     │                │                  │                 │
@@ -399,36 +399,36 @@ START
              ▼
     ┌────────────────┐
     │  Skill 1 of N  │◄─────────────────────────────┐
-    └───────┬────────┘                               │
-            │                                        │
-            ▼                                        │
-    ┌───────────────────┐                            │
-    │ Q1: Text question │ ← Scenario-based,          │
-    │    (LLM chat)     │   adaptive to resume       │
-    └───────┬───────────┘                            │
-            │ user answers                           │
-            ▼                                        │
-    ┌───────────────────┐                            │
-    │ Q2: MCQ #1        │ ← Generated based on       │
-    │ (structured JSON) │   conversation so far       │
-    └───────┬───────────┘                            │
-            │ user selects A/B/C/D                   │
-            │ → feedback (correct/incorrect)         │
-            ▼                                        │
-    ┌───────────────────┐                            │
-    │ Q3: MCQ #2        │ ← Probes deeper based      │
-    │ (structured JSON) │   on Q1 + Q2 answers        │
-    └───────┬───────────┘                            │
-            │ user selects A/B/C/D                   │
-            │ → feedback                             │
-            ▼                                        │
-    ┌───────────────────┐                            │
-    │ Score skill (LLM) │ → score/10, proficiency,   │
-    │                   │   strengths, gaps           │
-    └───────┬───────────┘                            │
-            │                                        │
-            ▼                                        │
-       More skills? ──── YES ────────────────────────┘
+    └───────┬────────┘                              │
+            │                                       │
+            ▼                                       │
+    ┌───────────────────┐                           │
+    │ Q1: Text question │ ← Scenario-based,         │
+    │    (LLM chat)     │   adaptive to resume      │
+    └───────┬───────────┘                           │
+            │ user answers                          │
+            ▼                                       │
+    ┌───────────────────┐                           │
+    │ Q2: MCQ #1        │ ← Generated based on      │
+    │ (structured JSON) │   conversation so far     │
+    └───────┬───────────┘                           │
+            │ user selects A/B/C/D                  │
+            │ → feedback (correct/incorrect)        │
+            ▼                                       │
+    ┌───────────────────┐                           │
+    │ Q3: MCQ #2        │ ← Probes deeper based     │
+    │ (structured JSON) │   on Q1 + Q2 answers      │
+    └───────┬───────────┘                           │
+            │ user selects A/B/C/D                  │
+            │ → feedback                            │
+            ▼                                       │
+    ┌───────────────────┐                           │
+    │ Score skill (LLM) │ → score/10, prficiency,   │
+    │                   │   strengths, aps          │
+    └───────┬───────────┘                           │
+            │                                       │
+            ▼                                       │
+       More skills? ──── YES ───────────────────────┘
             │
             NO
             │
@@ -527,7 +527,3 @@ overall_percentage = (sum of all skill scores + coding score) / (count × 10) ×
 | `GET` | `/health` | Health check |
 
 ---
-
-## License
-
-MIT

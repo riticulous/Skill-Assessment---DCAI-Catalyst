@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-ink: var(--ink);
+  --color-bone: var(--bone);
+  --color-amber: var(--amber);
+  --color-violet: var(--violet);
+  --color-acid: var(--acid);
+  --color-rose: var(--rose);
+
+  /* App-page action color (purple) — distinct from Lovable's "primary" (bone) */
+  --color-vio: #7c3aed;
+  --color-vio-hover: #6d28d9;
+  --color-vio-light: #a78bfa;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  --font-display: "Instrument Serif", "Times New Roman", serif;
+  --font-sans: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root {
+  --radius: 0.5rem;
+
+  --background: oklch(0.14 0.03 270);
+  --foreground: oklch(0.96 0.01 260);
+  --ink: oklch(0.96 0.01 260);
+  --bone: oklch(0.14 0.03 270);
+
+  --card: oklch(0.18 0.04 268);
+  --card-foreground: oklch(0.96 0.01 260);
+  --popover: oklch(0.18 0.04 268);
+  --popover-foreground: oklch(0.96 0.01 260);
+
+  --primary: oklch(0.96 0.01 260);
+  --primary-foreground: oklch(0.14 0.03 270);
+
+  --secondary: oklch(0.22 0.05 270);
+  --secondary-foreground: oklch(0.96 0.01 260);
+  --muted: oklch(0.22 0.05 270);
+  --muted-foreground: oklch(0.7 0.04 265);
+  --accent: oklch(0.32 0.12 285);
+  --accent-foreground: oklch(0.96 0.01 260);
+  --destructive: oklch(0.62 0.22 18);
+  --destructive-foreground: oklch(0.98 0.005 260);
+  --border: oklch(0.96 0.01 260 / 0.12);
+  --input: oklch(0.96 0.01 260 / 0.16);
+  --ring: oklch(0.62 0.2 285);
+
+  --amber: oklch(0.72 0.18 280);
+  --violet: oklch(0.62 0.24 295);
+  --acid: oklch(0.78 0.16 230);
+  --rose: oklch(0.7 0.22 320);
+  --azure: oklch(0.66 0.2 245);
+
+  --gradient-warm: linear-gradient(135deg, oklch(0.7 0.22 295), oklch(0.66 0.2 240));
+  --gradient-headline: linear-gradient(180deg, oklch(0.96 0.01 260) 0%, oklch(0.96 0.01 260) 55%, oklch(0.66 0.2 285) 100%);
+  --shadow-sharp: 6px 6px 0 oklch(0.62 0.24 295);
+  --shadow-soft: 0 30px 60px -20px oklch(0.62 0.24 295 / 0.4);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    background-image:
+      radial-gradient(at 15% 0%, oklch(0.4 0.22 285 / 0.45) 0px, transparent 55%),
+      radial-gradient(at 85% 100%, oklch(0.4 0.2 240 / 0.4) 0px, transparent 55%),
+      radial-gradient(at 50% 50%, oklch(0.2 0.08 280 / 0.3) 0px, transparent 70%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background: oklch(0.62 0.24 295);
+    color: oklch(0.98 0.005 260);
+  }
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: oklch(0.96 0.01 260 / 0.12); border-radius: 99px; }
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+    font-feature-settings: "ss01", "liga", "dlig";
+  }
+
+  .grain { position: relative; }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.25;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.7 0 0 0 0 0.6 0 0 0 0 1 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+
+  .marquee { animation: marquee 40s linear infinite; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .ticker-pulse { animation: pulse-dot 1.6s ease-in-out infinite; }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .hover-lift {
+    transition: transform 250ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 250ms;
+  }
+  .hover-lift:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-sharp);
+  }
+}
+
+@keyframes wave {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  10% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  30% { transform: rotate(14deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(10deg); }
+}

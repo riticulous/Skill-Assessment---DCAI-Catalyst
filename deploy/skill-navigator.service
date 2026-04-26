@@ -1,0 +1,15 @@
+[Unit]
+Description=Skill Navigator API (Uvicorn)
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/app/backend
+EnvironmentFile=/home/ubuntu/app/backend/.env
+ExecStart=/home/ubuntu/app/backend/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

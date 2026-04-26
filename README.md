@@ -110,6 +110,42 @@ npm run dev
 - **PDF Export** — clean, text-based report export
 - **Delete Assessments** — manage past assessment history
 
+## Deployment (AWS EC2)
+
+Deploy both frontend and backend on a single EC2 instance:
+
+### 1. Launch EC2
+
+- **AMI**: Ubuntu 24.04 LTS, **Instance**: t2.micro (free tier)
+- **Security group**: Open ports 22 (SSH), 80 (HTTP)
+- Download your `.pem` key file
+
+### 2. First-time setup
+
+```bash
+ssh -i key.pem ubuntu@<EC2_IP> 'bash -s' < deploy/setup.sh
+```
+
+### 3. Create env files on the server
+
+```bash
+ssh -i key.pem ubuntu@<EC2_IP>
+
+# Create backend env
+mkdir -p /home/ubuntu/app/backend /home/ubuntu/app/frontend
+nano /home/ubuntu/app/backend/.env    # paste your backend env vars
+nano /home/ubuntu/app/frontend/.env   # paste your frontend env vars
+exit
+```
+
+### 4. Deploy
+
+```bash
+./deploy/deploy.sh <EC2_IP> key.pem
+```
+
+Site is live at `http://<EC2_IP>`. Subsequent deploys are the same single command.
+
 ## License
 
 MIT

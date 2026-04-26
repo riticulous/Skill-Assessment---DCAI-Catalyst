@@ -1,23 +1,69 @@
-# Skill Navigator Pro
+# SkillProbe — AI-Powered Skill Assessment Agent
 
-An AI-powered skill assessment platform that evaluates candidates against job descriptions using conversational AI, MCQs, and coding challenges — then generates personalized learning plans to bridge skill gaps.
+**Get that dream job.** SkillProbe is an intelligent skill assessment platform that analyzes the gap between a job description and your resume, conducts an adaptive AI-driven assessment (conversational questions, MCQs, and a coding challenge), then generates a detailed report with personalized learning plans to help you prepare.
 
-## What It Does
+> **Live:** [https://skillprobe-dcai.duckdns.org](https://skillprobe-dcai.duckdns.org)
 
-1. **Upload a job description + resume** — the AI extracts and cross-references skills from both
-2. **Take an adaptive assessment** — conversational questions, MCQs, and (for tech roles) a coding challenge in a sandbox editor
-3. **Get a detailed report** — skill scores, gap analysis, and a curated learning plan with resources
-4. **Export as PDF** — download a clean report for reference
+---
+
+## How It Works
+
+1. **Paste a job description & upload your resume** — the AI extracts skills from both and identifies gaps.
+2. **Take an adaptive assessment** — for each skill gap the agent asks a conversational question followed by two MCQs, dynamically adjusting difficulty based on your answers.
+3. **Tackle a coding challenge** — for technical roles, a medium-level DSA problem is generated in the most prominent language from your JD + resume.
+4. **Get your report** — scores per skill, an overall proficiency classification, and a curated learning plan with clickable resource links.
+5. **Export as PDF** — download a clean, plain-text PDF of your full report.
+
+---
+
+## Screenshots
+
+<!-- Replace the placeholders below with actual screenshots -->
+
+| Landing Page | Dashboard |
+|:---:|:---:|
+| ![Landing Page](docs/screenshots/landing.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+
+| Assessment — Text & MCQ | Assessment — Coding Challenge |
+|:---:|:---:|
+| ![Assessment](docs/screenshots/assessment.png) | ![Coding](docs/screenshots/coding.png) |
+
+| Report & Learning Plan | PDF Export |
+|:---:|:---:|
+| ![Report](docs/screenshots/report.png) | ![PDF](docs/screenshots/pdf.png) |
+
+---
+
+## Features
+
+- **Skill gap analysis** — automatically extracts and compares skills from JD and resume using LLMs
+- **Multi-modal assessment** — text-based Q&A, interactive MCQs, and a live code editor with syntax highlighting
+- **Adaptive questioning** — the AI agent adjusts follow-up questions based on previous answers
+- **Coding challenges** — medium-level DSA problems with starter code, examples, and hints (CodeMirror editor)
+- **Real-time WebSocket communication** — seamless, low-latency assessment experience
+- **Detailed scoring** — per-skill scores (out of 10) with strengths, gaps, and proficiency levels
+- **Learning plans** — curated resources (courses, articles, tutorials) with clickable links
+- **PDF export** — plain-text PDF reports with all assessment data
+- **Google OAuth** — secure authentication via Supabase Auth
+- **Assessment history** — named assessments (e.g., "SWE 3 — Google") stored and accessible from the dashboard
+- **API key rotation** — multiple Groq API keys with automatic failover on rate limits
+- **Responsive UI** — dark-themed, modern design built with Tailwind CSS v4 and Framer Motion
+
+---
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| **Frontend** | React 19, TypeScript, Vite, TailwindCSS 4, Framer Motion |
-| **Backend** | Python, FastAPI, WebSockets |
-| **LLM** | Groq (Llama 3.3 70B) with multi-key rotation |
-| **Database** | Supabase (PostgreSQL + Auth + RLS) |
-| **Code Editor** | CodeMirror 6 (JS, Python, Java, C++ highlighting) |
+| **Frontend** | React 19, TypeScript, Vite 8, Tailwind CSS v4, Framer Motion, Recharts |
+| **Code Editor** | CodeMirror 6 (Python, JavaScript, Java, C++ support) |
+| **Backend** | Python 3.11+, FastAPI, WebSockets, Uvicorn |
+| **LLM** | Groq API — Llama 3.3 70B Versatile (with multi-key rotation) |
+| **Database & Auth** | Supabase (PostgreSQL + Google OAuth + JWT) |
+| **PDF Generation** | jsPDF |
+| **Deployment** | AWS EC2, Nginx, systemd, Let's Encrypt SSL |
+
+---
 
 ## Project Structure
 
@@ -25,126 +71,223 @@ An AI-powered skill assessment platform that evaluates candidates against job de
 skill-assessment-agent/
 ├── backend/
 │   ├── app/
-│   │   ├── middleware/     # JWT auth
-│   │   ├── models/         # Pydantic schemas
-│   │   ├── prompts/        # LLM prompt templates
-│   │   ├── routes/         # FastAPI endpoints + WebSocket
-│   │   └── services/       # LLM, scoring, assessment agent, DB
+│   │   ├── main.py                 # FastAPI app entry point
+│   │   ├── config.py               # Environment settings
+│   │   ├── middleware/
+│   │   │   └── auth.py             # JWT verification (local + Supabase fallback)
+│   │   ├── models/
+│   │   │   └── schemas.py          # Pydantic models
+│   │   ├── prompts/
+│   │   │   ├── assessment.py       # Assessment, MCQ, coding prompts
+│   │   │   └── extraction.py       # Skill extraction prompts
+│   │   ├── routes/
+│   │   │   ├── session.py          # POST /api/session — create assessment
+│   │   │   ├── chat.py             # WS  /api/ws/chat/:id — live assessment
+│   │   │   ├── report.py           # GET /api/report/:id — fetch report
+│   │   │   └── history.py          # GET /api/sessions — user history
+│   │   └── services/
+│   │       ├── llm.py              # Groq client + key rotation
+│   │       ├── assessment.py       # Assessment agent logic
+│   │       ├── scoring.py          # Skill & code scoring
+│   │       ├── skill_extractor.py  # JD/resume skill extraction
+│   │       ├── resume_parser.py    # PDF text extraction (PyMuPDF)
+│   │       └── db.py               # Supabase database operations
 │   ├── requirements.txt
-│   ├── supabase_schema.sql
+│   ├── Dockerfile
 │   └── .env.example
 ├── frontend/
 │   ├── src/
-│   │   ├── components/     # Landing, dashboard, assessment, report UI
-│   │   ├── hooks/          # useAuth, useWebSocket
-│   │   ├── lib/            # API client, Supabase client
-│   │   └── pages/          # Home, AppPage, Assessment, Report
+│   │   ├── pages/
+│   │   │   ├── Home.tsx            # Landing page
+│   │   │   ├── AppPage.tsx         # Dashboard (new assessment + history)
+│   │   │   ├── Assessment.tsx      # Live assessment page
+│   │   │   └── Report.tsx          # Report + PDF export
+│   │   ├── components/
+│   │   │   ├── landing/            # Landing page components
+│   │   │   ├── dashboard/          # Dashboard components
+│   │   │   ├── assessment/         # ChatThread, MCQCard, CodeEditor, etc.
+│   │   │   └── report/             # Report sections, learning plan
+│   │   ├── hooks/
+│   │   │   ├── useAuth.ts          # Supabase auth hook
+│   │   │   └── useWebSocket.ts     # WebSocket communication hook
+│   │   └── lib/
+│   │       └── api.ts              # REST + WebSocket API client
 │   ├── package.json
 │   └── .env.example
+├── deploy/
+│   ├── deploy.sh                   # EC2 deployment script
+│   ├── setup.sh                    # First-time server setup
+│   ├── nginx.conf                  # Nginx reverse proxy config
+│   └── skill-navigator.service     # systemd unit file
 └── README.md
 ```
 
-## Getting Started
+---
+
+## Getting Started (Local Development)
 
 ### Prerequisites
 
-- Node.js 18+
-- Python 3.11+
-- A [Supabase](https://supabase.com) project
-- A [Groq](https://console.groq.com) API key
+- **Python 3.11+**
+- **Node.js 20+** and npm
+- A **Supabase** project (free tier works)
+- A **Groq** API key ([console.groq.com](https://console.groq.com))
 
 ### 1. Database Setup
 
-Run the SQL in `backend/supabase_schema.sql` in your Supabase SQL Editor to create the `sessions`, `messages`, and `reports` tables with RLS policies.
+Create the following tables in your Supabase SQL editor:
 
-Enable **Google OAuth** in Supabase Auth settings (Authentication > Providers > Google).
+```sql
+-- Sessions
+CREATE TABLE sessions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID NOT NULL,
+  title TEXT DEFAULT '',
+  jd_text TEXT NOT NULL,
+  resume_text TEXT NOT NULL,
+  jd_skills JSONB DEFAULT '[]',
+  resume_skills JSONB DEFAULT '[]',
+  skills_to_assess JSONB DEFAULT '[]',
+  current_skill_index INT DEFAULT 0,
+  is_complete BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Messages
+CREATE TABLE messages (
+  id BIGSERIAL PRIMARY KEY,
+  session_id UUID REFERENCES sessions(id) ON DELETE CASCADE,
+  role TEXT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Reports
+CREATE TABLE reports (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  session_id UUID UNIQUE REFERENCES sessions(id) ON DELETE CASCADE,
+  overall_score NUMERIC DEFAULT 0,
+  overall_percentage NUMERIC DEFAULT 0,
+  classification TEXT DEFAULT '',
+  skill_scores JSONB DEFAULT '[]',
+  learning_plans JSONB DEFAULT '[]',
+  total_learning_hours NUMERIC DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+Then enable **Google OAuth** in your Supabase project under Authentication > Providers.
 
 ### 2. Backend
 
 ```bash
 cd backend
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+
+# Create .env from the example
 cp .env.example .env
-# Fill in your keys in .env
+# Fill in your values (see Environment Variables below)
+
 uvicorn app.main:app --reload
 ```
+
+The API runs at `http://localhost:8000`.
 
 ### 3. Frontend
 
 ```bash
 cd frontend
 npm install
+
+# Create .env from the example
 cp .env.example .env
-# Fill in your Supabase URL and anon key in .env
+# Fill in your values (see Environment Variables below)
+
 npm run dev
 ```
 
-### Environment Variables
+The app runs at `http://localhost:5173`.
 
-**Backend** (`backend/.env`):
+---
+
+## Environment Variables
+
+### Backend (`backend/.env`)
 
 | Variable | Description |
 |----------|-------------|
-| `GROQ_API_KEY` | Groq API key(s), comma-separated for rotation |
+| `LLM_PROVIDER` | LLM provider to use (default: `groq`) |
+| `GROQ_API_KEY` | Comma-separated Groq API keys for rotation |
 | `GROQ_MODEL` | Model name (default: `llama-3.3-70b-versatile`) |
+| `FRONTEND_URL` | Frontend origin for CORS (e.g., `http://localhost:5173`) |
 | `SUPABASE_URL` | Your Supabase project URL |
-| `SUPABASE_KEY` | Supabase **service role** key |
-| `FRONTEND_URL` | Frontend origin for CORS |
+| `SUPABASE_KEY` | Supabase **service_role** key |
+| `SUPABASE_JWT_SECRET` | *(Optional)* JWT secret for local token verification |
 
-**Frontend** (`frontend/.env`):
+### Frontend (`frontend/.env`)
 
 | Variable | Description |
 |----------|-------------|
+| `VITE_API_URL` | Backend API URL (leave empty for same-origin in production) |
 | `VITE_SUPABASE_URL` | Your Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Supabase **anon/public** key |
-| `VITE_API_URL` | Backend URL (leave empty for same-origin) |
 
-## Key Features
-
-- **Adaptive AI Assessment** — 1 conversational question + 2 MCQs per skill, with real-time scoring
-- **Coding Sandbox** — IDE-like editor with syntax highlighting, line numbers, and language detection for tech roles
-- **Smart Key Rotation** — multiple Groq API keys from different accounts rotate automatically on rate limits
-- **Google OAuth** — one-click sign-in via Supabase Auth
-- **PDF Export** — clean, text-based report export
-- **Delete Assessments** — manage past assessment history
+---
 
 ## Deployment (AWS EC2)
 
-Deploy both frontend and backend on a single EC2 instance:
-
-### 1. Launch EC2
-
-- **AMI**: Ubuntu 24.04 LTS, **Instance**: t2.micro (free tier)
-- **Security group**: Open ports 22 (SSH), 80 (HTTP)
-- Download your `.pem` key file
-
-### 2. First-time setup
+### First-Time Setup
 
 ```bash
-ssh -i key.pem ubuntu@<EC2_IP> 'bash -s' < deploy/setup.sh
+# SSH into your EC2 instance
+ssh -i your-key.pem ubuntu@<EC2_IP>
+
+# Run the setup script (installs Python, Node 20, Nginx, etc.)
+bash deploy/setup.sh
 ```
 
-### 3. Create env files on the server
+### Deploy
 
 ```bash
-ssh -i key.pem ubuntu@<EC2_IP>
-
-# Create backend env
-mkdir -p /home/ubuntu/app/backend /home/ubuntu/app/frontend
-nano /home/ubuntu/app/backend/.env    # paste your backend env vars
-nano /home/ubuntu/app/frontend/.env   # paste your frontend env vars
-exit
+# From your local machine
+./deploy/deploy.sh <EC2_IP> path/to/your-key.pem
 ```
 
-### 4. Deploy
+This script will:
+1. Pull latest code from GitHub
+2. Install backend dependencies
+3. Build the frontend
+4. Configure Nginx as a reverse proxy
+5. Restart the backend via systemd
+
+### SSL (HTTPS)
+
+After the first deploy, set up Let's Encrypt:
 
 ```bash
-./deploy/deploy.sh <EC2_IP> key.pem
+ssh -i your-key.pem ubuntu@<EC2_IP>
+sudo certbot --nginx -d yourdomain.example.com
 ```
 
-Site is live at `http://<EC2_IP>`. Subsequent deploys are the same single command.
+Certbot auto-renews certificates via a systemd timer.
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/session` | Create a new assessment session (multipart: JD + resume PDF + title) |
+| `POST` | `/api/session/text` | Create session with plain-text resume |
+| `GET` | `/api/sessions` | List all sessions for the authenticated user |
+| `DELETE` | `/api/session/:id` | Delete a session |
+| `WS` | `/api/ws/chat/:id` | WebSocket for live assessment (text, MCQ, coding) |
+| `GET` | `/api/report/:id` | Fetch the assessment report |
+| `GET` | `/health` | Health check |
+
+---
 
 ## License
 

@@ -44,9 +44,13 @@ def _rotate_key() -> str:
     return _keys[_current_idx]
 
 
-def _is_rate_limit(exc: Exception) -> bool:
+def _should_rotate(exc: Exception) -> bool:
     msg = str(exc).lower()
-    return "429" in msg or "rate" in msg or "quota" in msg or "limit" in msg
+    return (
+        "429" in msg or "rate" in msg or "quota" in msg or "limit" in msg
+        or "restricted" in msg or "organization" in msg
+        or "401" in msg or "403" in msg or "invalid_api_key" in msg
+    )
 
 
 # ── Public API ───────────────────────────────────────────────────────
@@ -64,7 +68,7 @@ async def chat(
             return await _call_groq(messages, system_prompt, max_tokens=max_tokens)
         except Exception as exc:
             last_exc = exc
-            if _is_rate_limit(exc) and attempt < len(_keys) - 1:
+            if _should_rotate(exc) and attempt < len(_keys) - 1:
                 _rotate_key()
                 await asyncio.sleep(0.15)
                 continue
@@ -151,7 +155,7 @@ async def _call_groq_json(
             return response.choices[0].message.content
         except Exception as exc:
             last_exc = exc
-            if _is_rate_limit(exc) and attempt < len(_keys) - 1:
+            if _should_rotate(exc) and attempt < len(_keys) - 1:
                 _rotate_key()
                 await asyncio.sleep(0.15)
                 continue
